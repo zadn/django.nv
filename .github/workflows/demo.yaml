@@ -10,19 +10,37 @@ jobs:
     runs-on: ubuntu-latest                    # similar to "image" in GitLab
     steps:
       - run: echo "This is a build step"      # similar to "script" in GitLab
+    concurrency: staging_environment
+
 
   test:
     runs-on: ubuntu-latest
     steps:
       - run: echo "This is a test step"
+    concurrency: staging_environment
+
+  artifact:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "This is a artifact step"> output.txt
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v2
+        with:
+          name: code-output
+          path: output.txt
+    concurrency: staging_environment
 
   integration:
     runs-on: ubuntu-latest
     steps:
       - run: echo "This is an integration step"
       - run: exit 1
+      - continue-on-error: true
+    concurrency: staging_environment
 
   prod:
     runs-on: ubuntu-latest
     steps:
       - run: echo "This is a deploy step"
+    concurrency: staging_environment
+
